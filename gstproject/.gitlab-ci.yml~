@@ -1,0 +1,42 @@
+image: node:argon
+
+before_script:
+  - apt-get -qq update
+  - apt-get -qq install -y python2.7 python2.7-dev build-essential make gcc g++ libicu-dev
+  - npm -g install npm --silent
+  - npm set progress=false
+  - npm install --silent
+
+stages:
+  - test
+  - build
+  - clean_up
+
+run_tests:
+  stage: test
+  script:
+    - npm test
+
+build_and_deploy_prod:
+  stage: build
+  script:
+    - npm run build
+    - mkdir  dist/build
+    - tar czfC dist/build/latest.tar.gz dist/$CI_BUILD_REF_NAME/ .
+    - tar czfC dist/build/$CI_BUILD_REF.tar.gz dist/$CI_BUILD_REF_NAME/ .
+    - apt-get install -yqq ruby ruby-dev
+    - gem install dpl
+    - dpl --provider=heroku --app=gst-project --api-key=$HEROKU_API_KEY
+  artifacts:
+    paths:
+      - dist/$CI_BUILD_REF_NAME/
+  only:
+    - master
+    - develop
+
+clean_up_job:
+  stage: clean_up
+  script:
+    - rm -rf node_modules
+    - rm -rf ~/.node-gyp
+  when: on_failure
