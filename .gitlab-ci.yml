@@ -25,7 +25,6 @@ run_tests:
 build_and_deploy_prod:
   stage: build
   script:
-    - npm run start
     - apt-get install -yqq ruby ruby-dev
     - gem install dpl
     - dpl --provider=heroku --app=gst-project --api-key=$HEROKU_API_KEY
