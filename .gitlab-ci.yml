@@ -1,4 +1,11 @@
-image: node:latest
+image: node:argon
+
+before_script:
+  - apt-get -qq update
+  - apt-get -qq install -y python2.7 python2.7-dev build-essential make gcc g++ libicu-dev
+  - npm -g install npm --silent
+  - npm set progress=false
+  - npm install --silent
 
 stages:
   - build
@@ -18,7 +25,6 @@ run_tests:
 build_and_deploy_prod:
   stage: build
   script:
-    - npm install
     - npm run start
     - apt-get install -yqq ruby ruby-dev
     - gem install dpl
