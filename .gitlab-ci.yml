@@ -7,7 +7,7 @@ stages:
 
 cache:
   paths:
-    - gstproject/node_modules/
+    - node_modules/
 
 
 run_tests:
@@ -25,10 +25,10 @@ build_and_deploy_prod:
     - dpl --provider=heroku --app=gst-project --api-key=$HEROKU_API_KEY
   artifacts:
     paths:
-      - gstproject/node_modules
-      - gstproject/public/static/dist/
+      - node_modules/
+      - public/static/dist/
   only:
-    - master
+    - depl-struct
 
 clean_up_job:
   stage: clean_up
